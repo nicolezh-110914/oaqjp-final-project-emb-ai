@@ -39,7 +39,7 @@ def emotion_detector(text_to_analyse: str) -> Dict[str, Optional[float]]:
         }
     }
 
-    # 3. 发送 POST 请求（修复SSL验证问题）
+    # 3. 发送 POST 请求
     try:
         response = requests.post(
             url=f"{WATSON_NLP_ENDPOINT}/v1/analyze",
@@ -47,7 +47,7 @@ def emotion_detector(text_to_analyse: str) -> Dict[str, Optional[float]]:
             params=params,
             json=data,
             timeout=10,
-            verify=False  # 解决本地SSL报错
+            verify=False  # 解决本地SSL验证问题（仅测试用）
         )
         response.raise_for_status()  # 检查 HTTP 状态码
         result = response.json()
@@ -87,7 +87,7 @@ def emotion_detector(text_to_analyse: str) -> Dict[str, Optional[float]]:
             'disgust': None
         }
 
-# ================= 示例调用（修复语法/逻辑错误） =================
+# ================= 示例调用（用于测试） =================
 if __name__ == "__main__":
     # 测试用例 1: 正面情感
     test_text_1 = "I just got a promotion at work! I'm extremely happy and excited."
@@ -97,13 +97,13 @@ if __name__ == "__main__":
     print(f"主导情感: {result_1['dominant_emotion']}")
     print("情感得分:")
     for emotion, score in result_1.items():
-        if emotion != 'dominant_emotion':  # 外层判断
-            if score is not None:  # 修复缩进：增加4个空格
+        if emotion != 'dominant_emotion':
+            if score is not None:
                 print(f"  - {emotion}: {score:.4f}")
             else:
                 print(f"  - {emotion}: None")
 
-    # 测试用例 2: 负面情感（修复None值判断）
+    # 测试用例 2: 负面情感
     test_text_2 = "I lost my wallet and missed the train. I feel so frustrated and sad."
     result_2 = emotion_detector(test_text_2)
     print("\n测试用例 2 结果:")
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     print("情感得分:")
     for emotion, score in result_2.items():
         if emotion != 'dominant_emotion':
-            if score is not None:  # 新增：避免None格式化报错
+            if score is not None:
                 print(f"  - {emotion}: {score:.4f}")
             else:
                 print(f"  - {emotion}: None")
